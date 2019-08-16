@@ -1,4 +1,4 @@
-package com.psql;
+package com.psql.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

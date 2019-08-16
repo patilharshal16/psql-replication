@@ -1,3 +1,8 @@
-/home/harshal/spring_projects/psql-parser/src/main/java/com/psql/AppConfig.java
-/home/harshal/spring_projects/psql-parser/src/main/java/com/psql/service/PsqlParserService.java
-/home/harshal/spring_projects/psql-parser/src/main/java/com/psql/PsqlApplication.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/config/KafkaConfig.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/config/AppConfig.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/service/PsqlParserService.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/kafka/KafkaConsumer.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/QueryExecutor.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/kafka/KafkaProducer.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/TableCreator.java
+/home/coditas/Aarish/IntelliJ-WS/psql-replication/src/main/java/com/psql/PsqlApplication.java

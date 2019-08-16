@@ -1,5 +1,10 @@
 com/psql/service/PsqlParserService$DataType.class
+com/psql/TableCreator.class
+com/psql/kafka/KafkaConsumer.class
+com/psql/config/KafkaConfig.class
 com/psql/service/PsqlParserService.class
 com/psql/PsqlApplication.class
-com/psql/AppConfig.class
+com/psql/config/AppConfig.class
+com/psql/kafka/KafkaProducer.class
 com/psql/service/PsqlParserService$Operation.class
+com/psql/QueryExecutor.class

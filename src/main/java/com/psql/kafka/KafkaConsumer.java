@@ -24,14 +24,11 @@ public class KafkaConsumer {
     @KafkaListener(topics = "audit_log", groupId = "audit_log_group")
     public void processData(
             @Payload String message,
-            /*@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key,*/
             @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition, ConsumerRecord<?, ?> record) throws Exception{
         logger.info("Consumer 1 Received on Thread ID: " + Thread.currentThread().getId() +" - " + message + " : [ key ]  from partition : " + partition);
-
-        Object obj = record.value();
-
-        logger.info(obj.toString() );
-       psqlParserService.addLogForData(obj.toString());
+        String data = record.value().toString();
+        logger.info( data );
+        psqlParserService.addLogForData(data);
     }
 
 

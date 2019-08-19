@@ -1,6 +1,7 @@
 package com.psql.service;
 
 import com.psql.config.AppConfig;
+import com.psql.config.AuditConfig;
 import com.psql.kafka.KafkaConsumer;
 import com.psql.kafka.KafkaProducer;
 import org.apache.commons.lang.StringUtils;
@@ -21,10 +22,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -33,25 +31,21 @@ import static java.sql.DriverManager.getConnection;
 @Service
 public class PsqlParserService {
 
+    private static final Logger log = LoggerFactory.getLogger(PsqlParserService.class);
     @Autowired
     private AppConfig appConfig;
-
+    @Autowired
+    private AuditConfig auditConfig;
     @Autowired
     KafkaProducer kafkaProducer;
-
     @Autowired
     KafkaConsumer kafkaConsumer;
-
     @Value(value = "${log.topic.name}")
     private String topic;
 
     private String createTableQuery = "";
 
-    private static final Logger log = LoggerFactory.getLogger(PsqlParserService.class);
-
-
     private enum DataType {bigint, name, date}
-
     private enum Operation {insert, update, delete}
 
     /**
@@ -60,15 +54,10 @@ public class PsqlParserService {
      * @throws SQLException
      * @throws InterruptedException
      */
-    public void parseData() throws SQLException, InterruptedException {
-        Properties props = new Properties();
-        PGProperty.USER.set(props, appConfig.getUsername());
-        PGProperty.PASSWORD.set(props, appConfig.getPassword());
-        PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "11");
-        PGProperty.REPLICATION.set(props, "database");
-        PGProperty.PREFER_QUERY_MODE.set(props, "simple");
 
-        try (Connection replicationConnection = getConnection(appConfig.getUrl(), props)) {
+    public void parseData() throws SQLException, InterruptedException {
+        Properties props = getProperties();
+        try (Connection replicationConnection = getConnection(auditConfig.getUrl(), props)) {
             try {
                     PGConnection replConnection = replicationConnection.unwrap(PGConnection.class);
                     //create replication slot
@@ -114,9 +103,8 @@ public class PsqlParserService {
                 finally {
                     log.info("Process ........");
                 }
-
+            }
         }
-    }
 
 
     /**
@@ -130,20 +118,18 @@ public class PsqlParserService {
         JSONObject dataObject = new JSONObject(data);
         JSONArray dataArray = dataObject.getJSONArray("change");
         Properties props = getProperties();
-        Connection logConnection = getConnection(appConfig.getUrl(), props);
+        Connection logConnection = getConnection(auditConfig.getUrl(), props);
         Statement preparedStatement = logConnection.createStatement();
         int dataLength = dataArray.length();
 
         for (int index = 0; index < dataLength; index++) {
             String operation = (String) dataArray.getJSONObject(index).get("kind"); //operation
-
             String table = (String) dataArray.getJSONObject(index).get("table");
-            if ( Operation.valueOf(operation).equals(Operation.insert) || Operation.valueOf(operation).equals(Operation.update)) {
+            if ( !table.endsWith("_log") && Operation.valueOf(operation).equals(Operation.insert) || Operation.valueOf(operation).equals(Operation.update)) {
                 log.info("************Adding chargeback log**************");
                 log.info("Perform log for table:{} and for operation:{}", table, operation);
-
                 String query = getQueryStringForLog(dataArray.getJSONObject(index), table, operation,createTableQuery);
-               // preparedStatement.executeUpdate(createTableQuery);
+                preparedStatement.executeUpdate(createTableQuery);
                 preparedStatement.addBatch(query);
             }
         }
@@ -216,8 +202,8 @@ public class PsqlParserService {
         return query;
     }
 
-    public String createTableIfNotExist(String tableName, Map<String, String> columnMap) {
-        StringBuilder tableQueryBuilder = new StringBuilder("create table if not exists " + tableName+ "_log( \"ID\" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),");
+    private String createTableIfNotExist(String tableName, Map<String, String> columnMap) {
+        StringBuilder tableQueryBuilder = new StringBuilder("create table if not exists " + tableName+ "( \"ID\" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),");
         for (Map.Entry<String, String> map : columnMap.entrySet()) {
             log.info(map.getKey() + " " + map.getValue() + ",");
             tableQueryBuilder.append(map.getKey().toUpperCase() + " " + map.getValue().toUpperCase() + ",");
@@ -226,19 +212,18 @@ public class PsqlParserService {
         if (createTableQuery.endsWith(",")) {
             createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 1);
         }
-        createTableQuery = createTableQuery + ", CONSTRAINT "+tableName+"_log_pkey PRIMARY KEY (\"ID\"));";
+        createTableQuery = createTableQuery + ", CONSTRAINT "+tableName+"_pkey PRIMARY KEY (\"ID\"));";
         log.info("Table insert query: {}", createTableQuery);
         return createTableQuery;
     }
 
-    public Properties getProperties(){
+    private Properties getProperties(){
         Properties props = new Properties();
         PGProperty.USER.set(props, appConfig.getUsername());
         PGProperty.PASSWORD.set(props, appConfig.getPassword());
         PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "11");
         PGProperty.REPLICATION.set(props, "database");
         PGProperty.PREFER_QUERY_MODE.set(props, "simple");
-
         return props;
     }
 

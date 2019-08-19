@@ -22,6 +22,7 @@ public class KafkaConfig {
     private String groupId;
     @Value("${consumer.concurrency}")
     private Integer concurrency;
+
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();

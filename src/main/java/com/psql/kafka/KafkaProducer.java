@@ -10,17 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
-
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
-
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-
-
     public void postData(String topic, String jsonData){
         try {
-            logger.info("Sending data to kafka = '{}' with topic '{}'", jsonData, topic);
+            logger.info("Sending data to kafka = {} with topic {}", jsonData, topic);
             kafkaTemplate.send(topic,  jsonData);
         } catch (Exception e) {
             logger.error("An error occurred! '{}'", e.getMessage());

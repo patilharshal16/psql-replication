@@ -1,6 +1,7 @@
 package com.psql;
 
 import com.psql.config.AppConfig;
+import com.psql.config.AuditConfig;
 import com.psql.service.PsqlParserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import static java.lang.System.exit;
 
 @SpringBootApplication
-@EnableConfigurationProperties({AppConfig.class})
+@EnableConfigurationProperties({AppConfig.class, AuditConfig.class})
 public class PsqlApplication implements CommandLineRunner {
 
     @Autowired

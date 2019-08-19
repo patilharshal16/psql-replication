@@ -2,9 +2,11 @@ package com.psql.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "spring.datasource", ignoreUnknownFields = false)
-public class AppConfig {
-
+/**
+ * @author Aarish
+ */
+@ConfigurationProperties(prefix = "audit.datasource", ignoreUnknownFields = false)
+public class AuditConfig {
     private String url;
     private String username;
     private String password;
@@ -25,4 +27,5 @@ public class AppConfig {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

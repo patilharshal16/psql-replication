@@ -57,7 +57,7 @@ public class PsqlParserService {
 
     public void parseData() throws SQLException, InterruptedException {
         Properties props = getProperties();
-        try (Connection replicationConnection = getConnection(auditConfig.getUrl(), props)) {
+        try (Connection replicationConnection = getConnection(appConfig.getUrl(), props)) {
             try {
                     PGConnection replConnection = replicationConnection.unwrap(PGConnection.class);
                     //create replication slot
@@ -92,7 +92,8 @@ public class PsqlParserService {
 
                         String data = new String(source, offset, length);
                         if (StringUtils.isNotEmpty(data)) {
-                            kafkaProducer.postData(topic, data);
+                            log.info(data);
+                            kafkaProducer.postData( data);
                         }
                         //feedback
                         stream.setAppliedLSN(stream.getLastReceiveLSN());
@@ -203,7 +204,7 @@ public class PsqlParserService {
     }
 
     private String createTableIfNotExist(String tableName, Map<String, String> columnMap) {
-        StringBuilder tableQueryBuilder = new StringBuilder("create table if not exists " + tableName+ "( \"ID\" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),");
+        StringBuilder tableQueryBuilder = new StringBuilder("create table if not exists " + tableName+"_log"+ "( \"ID\" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),");
         for (Map.Entry<String, String> map : columnMap.entrySet()) {
             log.info(map.getKey() + " " + map.getValue() + ",");
             tableQueryBuilder.append(map.getKey().toUpperCase() + " " + map.getValue().toUpperCase() + ",");

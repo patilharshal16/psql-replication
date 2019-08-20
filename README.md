@@ -30,6 +30,6 @@ max_replication_slots=4 -> max number of replication slots
 ```
 pg_hba.conf
 Enable connect user with replication privileges to replication stream.
-|local|replication|all|            |trust|
-|local|replication|all|127.0.0.1/32|MD5|
-|local|replication|all|::1/128     |MD5|
+* |local|replication|all|            |trust|
+* |local|replication|all|127.0.0.1/32|MD5|
+* |local|replication|all|::1/128     |MD5|

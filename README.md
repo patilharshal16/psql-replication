@@ -11,9 +11,9 @@ For access to real-time changes PostgreSQL provides the streaming replication pr
 
 ## Software Requirements:
 ```
-Java version "11.0.4",
-postgresql-10
-kafka
+* [Java 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Maven](https://maven.apache.org/download.cgi)postgresql-10
+* [kafka](https://kafka.apache.org/quickstart)
 ```
 ## Configuration for postgres
 postgresql.conf
@@ -29,7 +29,14 @@ wal_level=logical -> minimal, replica or logical
 max_replication_slots=4 -> max number of replication slots
 ```
 pg_hba.conf
+
 Enable connect user with replication privileges to replication stream.
 * |local|replication|all|            |trust|
 * |local|replication|all|127.0.0.1/32|MD5|
 * |local|replication|all|::1/128     |MD5|
+
+## Libraries Used:
+````
+* [Wal2JSON](https://github.com/eulerto/wal2json)
+Refer git documentation for Wal2JSON installation.
+````

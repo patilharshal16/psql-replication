@@ -12,7 +12,8 @@ For access to real-time changes PostgreSQL provides the streaming replication pr
 ## Software Requirements:
 
 * [Java 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Maven](https://maven.apache.org/download.cgi)postgresql-10
+* [Maven](https://maven.apache.org/download.cgi)
+* [postgresql-10](https://www.postgresql.org/download/)
 * [kafka](https://kafka.apache.org/quickstart)
 
 ## Configuration for postgres

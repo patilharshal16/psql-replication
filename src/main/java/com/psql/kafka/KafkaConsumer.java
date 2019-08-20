@@ -27,10 +27,8 @@ public class KafkaConsumer {
             @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition, ConsumerRecord<?, ?> record) throws Exception{
         logger.info("Consumer 1 Received on Thread ID: " + Thread.currentThread().getId() +" - " + message + " : [ key ]  from partition : " + partition);
         String data = record.value().toString();
-        logger.info( data );
         psqlParserService.addLogForData(data);
     }
-
 
 
 

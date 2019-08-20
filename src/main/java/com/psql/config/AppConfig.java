@@ -25,4 +25,6 @@ public class AppConfig {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

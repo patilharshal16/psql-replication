@@ -47,7 +47,8 @@ public class PsqlParserService {
 
     private enum DataType {bigint, name, date}
     private enum Operation {insert, update, delete}
-
+    static int i=1;
+    static int j=1;
     /**
      * Parse data obtained from WAL
      *
@@ -92,8 +93,9 @@ public class PsqlParserService {
 
                         String data = new String(source, offset, length);
                         if (StringUtils.isNotEmpty(data)) {
-                            log.info(data);
+                            //log.info(data);
                             kafkaProducer.postData( data);
+                            log.info("method called {} times",i++);
                         }
                         //feedback
                         stream.setAppliedLSN(stream.getLastReceiveLSN());
@@ -103,6 +105,7 @@ public class PsqlParserService {
                 }
                 finally {
                     log.info("Process ........");
+                    i=0;
                 }
             }
         }
@@ -132,9 +135,11 @@ public class PsqlParserService {
                 String query = getQueryStringForLog(dataArray.getJSONObject(index), table, operation,createTableQuery);
                 preparedStatement.executeUpdate(createTableQuery);
                 preparedStatement.addBatch(query);
+                log.info("inside addLog for loop");
             }
         }
         preparedStatement.executeBatch();
+        log.info("batch executed");
         logConnection.close();
     }
 
@@ -185,6 +190,9 @@ public class PsqlParserService {
                 case "timestamp":
                     values = StringUtils.isNotBlank(values) ? values.concat(",\'" + val + "\'") : values.concat("\'" + val + "\'");
                     break;
+
+                default:
+                    values = StringUtils.isNotBlank(values) ? values.concat(",\'" + val + "\'") : values.concat("\'" + val + "\'");
             }
         }
 
@@ -200,6 +208,7 @@ public class PsqlParserService {
         //log.info(tmpQuery);
 
         String query = "insert into " + table + "_log" + columns.toLowerCase() + " values " + values;
+        log.info("insert query executed {} times", j++);
         return query;
     }
 

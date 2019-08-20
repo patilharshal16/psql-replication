@@ -30,7 +30,6 @@ public class KafkaProducer {
             for (int index = 0; index < dataLength; index++) {
                 String operation = (String) dataArray.getJSONObject(index).get("kind"); //operation
                 String table = (String) dataArray.getJSONObject(index).get("table");
-                logger.info(jsonData);
                 kafkaTemplate.send("audit_log1", jsonData);
             }
         } catch (Exception e) {

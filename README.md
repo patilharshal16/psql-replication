@@ -41,3 +41,14 @@ Enable connect user with replication privileges to replication stream.
 * [Wal2JSON](https://github.com/eulerto/wal2json)
 Refer git documentation for Wal2JSON installation.
 
+## Build the app using maven
+
+`mvn package`
+
+## Run executable jar using java -jar
+
+`java -jar target/psql-0.0.1-SNAPSHOT.jar`
+
+## To run the app without packaging it using maven command line
+
+`mvn spring-boot:run`

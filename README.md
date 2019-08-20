@@ -1,9 +1,3 @@
-# psql-parser
-Parse data form WAL generated in Postgres db using "test_decoding" plugin provided in postgresql-contrib package.
-
-```
-table public.test_logic_table: INSERT: name[name]:'first tx changes' pk[bigint]:1
-```
 # Postgres Replication utility documentation 
 
 ## Overview     
@@ -15,4 +9,9 @@ Logical decoding takes the database’s write-ahead log (WAL), and gives us acce
 
 For access to real-time changes PostgreSQL provides the streaming replication protocol. Replication protocol can be physical or logical. Physical replication protocol is used for Master/Secondary replication. Logical replication protocol canbe used to stream changes to an external system.
 
-
+## Software Requirements:
+```
+Java version "11.0.4",
+postgresql-10
+kafka
+```

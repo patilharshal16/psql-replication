@@ -10,11 +10,11 @@ Logical decoding takes the database’s write-ahead log (WAL), and gives us acce
 For access to real-time changes PostgreSQL provides the streaming replication protocol. Replication protocol can be physical or logical. Physical replication protocol is used for Master/Secondary replication. Logical replication protocol canbe used to stream changes to an external system.
 
 ## Software Requirements:
-```
+
 * [Java 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * [Maven](https://maven.apache.org/download.cgi)postgresql-10
 * [kafka](https://kafka.apache.org/quickstart)
-```
+
 ## Configuration for postgres
 postgresql.conf
 * Propertymax_wal_sendersshould be at least equal to the number of replication consumers
@@ -36,7 +36,7 @@ Enable connect user with replication privileges to replication stream.
 * |local|replication|all|::1/128     |MD5|
 
 ## Libraries Used:
-````
+
 * [Wal2JSON](https://github.com/eulerto/wal2json)
 Refer git documentation for Wal2JSON installation.
-````
+

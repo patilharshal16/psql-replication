@@ -17,25 +17,26 @@ For access to real-time changes PostgreSQL provides the streaming replication pr
 * [kafka](https://kafka.apache.org/quickstart)
 
 ## Configuration for postgres
+To configure replication follow below link,
+
+[Logical Replication Configuration](https://jdbc.postgresql.org/documentation/head/replication.html)
+
+Below properties are refered from above replication link,
+
 postgresql.conf
 * Propertymax_wal_sendersshould be at least equal to the number of replication consumers
 * Propertywal_keep_segmentsshould contain count wal segments that can't be removed from database.
 * Propertywal_levelfor logical replication should be equal tological.
 * Propertymax_replication_slotsshould be greater than zero for logical replication, because logical replication can't work without replication slot.
-
+``
+Note: All this properties are commented by default. Need to uncomment.
+``
 ``` Example:
 max_wal_senders=4 -> max number of walsender processes
 wal_keep_segments=4 -> in logfile segments, 16MB each; 0 disables
 wal_level=logical -> minimal, replica or logical
 max_replication_slots=4 -> max number of replication slots
 ```
-pg_hba.conf
-
-Enable connect user with replication privileges to replication stream.
-* |local|replication|all|            |trust|
-* |local|replication|all|127.0.0.1/32|MD5|
-* |local|replication|all|::1/128     |MD5|
-
 ## Libraries Used:
 
 * [Wal2JSON](https://github.com/eulerto/wal2json)

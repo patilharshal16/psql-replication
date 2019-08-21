@@ -21,6 +21,11 @@ For access to real-time changes PostgreSQL provides the streaming replication pr
 * [postgresql-10](https://www.postgresql.org/download/)
 * [kafka](https://kafka.apache.org/quickstart)
 
+## Libraries Used:
+
+* [Wal2JSON](https://github.com/eulerto/wal2json)
+``Refer git documentation for Wal2JSON installation.``
+
 ## Configuration for postgres
 To configure Postgres replication follow below link,
 
@@ -42,10 +47,6 @@ wal_keep_segments=4 -> in logfile segments, 16MB each; 0 disables
 wal_level=logical -> minimal, replica or logical
 max_replication_slots=4 -> max number of replication slots
 ```
-## Libraries Used:
-
-* [Wal2JSON](https://github.com/eulerto/wal2json)
-Refer git documentation for Wal2JSON installation.
 
 ## Build the app using maven
 

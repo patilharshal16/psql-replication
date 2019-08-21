@@ -45,17 +45,15 @@ public class PsqlParserService {
 
     private String createTableQuery = "";
 
-    private enum DataType {bigint, name, date}
-    private enum Operation {insert, update, delete}
-    static int i=1;
-    static int j=1;
+    private enum DATATYPE {bigint, name, date}
+    private enum OPERATION {insert, update, delete}
+
     /**
      * Parse data obtained from WAL
      *
      * @throws SQLException
      * @throws InterruptedException
      */
-
     public void parseData() throws SQLException, InterruptedException {
         Properties props = getProperties();
         try (Connection replicationConnection = getConnection(appConfig.getUrl(), props)) {
@@ -93,9 +91,7 @@ public class PsqlParserService {
 
                         String data = new String(source, offset, length);
                         if (StringUtils.isNotEmpty(data)) {
-                            //log.info(data);
                             kafkaProducer.postData( data);
-                            log.info("method called {} times",i++);
                         }
                         //feedback
                         stream.setAppliedLSN(stream.getLastReceiveLSN());
@@ -105,7 +101,7 @@ public class PsqlParserService {
                 }
                 finally {
                     log.info("Process ........");
-                    i=0;
+
                 }
             }
         }
@@ -122,25 +118,25 @@ public class PsqlParserService {
         JSONObject dataObject = new JSONObject(data);
         JSONArray dataArray = dataObject.getJSONArray("change");
         Properties props = getProperties();
-        Connection logConnection = getConnection(auditConfig.getUrl(), props);
-        Statement preparedStatement = logConnection.createStatement();
         int dataLength = dataArray.length();
-
-        for (int index = 0; index < dataLength; index++) {
-            String operation = (String) dataArray.getJSONObject(index).get("kind"); //operation
-            String table = (String) dataArray.getJSONObject(index).get("table");
-            if ( !table.endsWith("_log") && Operation.valueOf(operation).equals(Operation.insert) || Operation.valueOf(operation).equals(Operation.update)) {
-                log.info("************Adding chargeback log**************");
-                log.info("Perform log for table:{} and for operation:{}", table, operation);
-                String query = getQueryStringForLog(dataArray.getJSONObject(index), table, operation,createTableQuery);
-                preparedStatement.executeUpdate(createTableQuery);
-                preparedStatement.addBatch(query);
-                log.info("inside addLog for loop");
+        try(Connection logConnection = getConnection(auditConfig.getUrl(), props)) {
+            try (Statement preparedStatement = logConnection.createStatement()) {
+                for (int index = 0; index < dataLength; index++) {
+                    String operation = (String) dataArray.getJSONObject(index).get("kind"); //operation
+                    String table = (String) dataArray.getJSONObject(index).get("table");
+                    if (!table.endsWith("_log") && OPERATION.valueOf(operation).equals(OPERATION.insert) || OPERATION.valueOf(operation).equals(OPERATION.update)) {
+                        log.info("************Adding chargeback log**************");
+                        log.info("Perform log for table:{} and for operation:{}", table, operation);
+                        String query = getQueryStringForLog(dataArray.getJSONObject(index), table, operation, createTableQuery);
+                        preparedStatement.executeUpdate(createTableQuery);
+                        preparedStatement.addBatch(query);
+                    }
+                }
+                preparedStatement.executeBatch();
             }
         }
-        preparedStatement.executeBatch();
         log.info("batch executed");
-        logConnection.close();
+
     }
 
     /**
@@ -159,7 +155,6 @@ public class PsqlParserService {
         List<Object> list = list1.stream()
                 .map(s -> "\"" + s + "\"")
                 .collect(Collectors.toList());
-
         list.add("\"AUDIT_ADD_DATE\"");
         list.add("\"AUDIT_PERFORMED_OPERATION\"");
         list.add("\"AUDIT_ADD_USERNAME\"");
@@ -203,19 +198,14 @@ public class PsqlParserService {
         columnMap.put("AUDIT_ADD_USERNAME","character varying(30)");
 
         createTableQuery = createTableIfNotExist(table,columnMap);
-
-        //String tmpQuery = String.format(" insert into %s %s values %", table, columns.toLowerCase(), values);
-        //log.info(tmpQuery);
-
         String query = "insert into " + table + "_log" + columns.toLowerCase() + " values " + values;
-        log.info("insert query executed {} times", j++);
         return query;
     }
 
     private String createTableIfNotExist(String tableName, Map<String, String> columnMap) {
         StringBuilder tableQueryBuilder = new StringBuilder("create table if not exists " + tableName+"_log"+ "( \"ID\" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),");
         for (Map.Entry<String, String> map : columnMap.entrySet()) {
-            log.info(map.getKey() + " " + map.getValue() + ",");
+            log.info("{},{}", map.getKey(), map.getValue());
             tableQueryBuilder.append(map.getKey().toUpperCase() + " " + map.getValue().toUpperCase() + ",");
         }
         createTableQuery = tableQueryBuilder.toString();

@@ -12,21 +12,22 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-
 @Component
 @Transactional
-public class KafkaConsumer {
+public class KafkaConsumer2 {
+
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
+
     @Autowired
     PsqlParserService psqlParserService;
 
     @KafkaListener(topics = "audit_log1", groupId = "audit_log_group")
     public void processData(
             @Payload String message,
-            @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition, ConsumerRecord<?, ?> record) throws SQLException {
-        logger.info("Consumer 1 received on Thread ID: {} - {} :[ key ] from partition : {} ",Thread.currentThread().getId(),message,partition);
+            @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition, ConsumerRecord<?, ?> record) throws Exception {
+        logger.info("Consumer 2 Received on Thread ID: " + Thread.currentThread().getId() + " - " + message + " : [ key ]  from partition : " + partition);
         String data = record.value().toString();
+        logger.info(data);
         psqlParserService.addLogForData(data);
     }
 }

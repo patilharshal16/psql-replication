@@ -6,7 +6,7 @@ Read data from WAL(Write ahead log) file i.e. in binary format and convert that 
 
 ## Overview
 
-For auditing the applications we usually follow various techniques like oracle trigger, hibernate event etc. depending upwhat suit to our application. 
+For auditing the applications we usually follow various techniques like oracle trigger, hibernate event etc. depending upon what suit to our application. 
 
 In our case after so many discussions we are agree upon to implement auditing system using WAL file. In postgres database there are two types of replication physical and logical. In our case we are using logical replication. Logical replication allows changes from a database to be streamed in real-time to an external system. The difference between physical replication and logical replication is that logical replication sends data over in a logical format whereas physical replication sends data over in a binary format. Additionally, logical replication can send over a single table, or database.Binary replication replicates the entire cluster in an all or nothing fashion which is to say there is no way to get a specific table or database using binary replication.
 

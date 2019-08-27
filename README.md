@@ -33,7 +33,7 @@ To configure Postgres replication follow below link,
 
 [Logical Replication Configuration](https://jdbc.postgresql.org/documentation/head/replication.html)
 
-Below properties are refered from above replication link,
+Below properties are refered from above link,
 
 postgresql.conf
 * Propertymax_wal_sendersshould be at least equal to the number of replication consumers

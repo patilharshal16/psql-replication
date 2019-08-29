@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Read data from WAL(Write ahead log) file i.e. in binary format and convert that WAL data to readable JSON format using Wal2JSON library and store that JSON data in Database/S3/Cloud for auditing purpose.
+Read data from WAL(Write ahead log) file i.e. in binary format and convert that WAL data to readable JSON format using Wal2JSON library and store that JSON data in database/S3/Cloud for auditing purpose.
 
 ## Overview
 

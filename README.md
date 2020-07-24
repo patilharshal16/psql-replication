@@ -26,7 +26,7 @@ For access to real-time changes PostgreSQL provides the streaming replication pr
 ## Libraries Used:
 
 * [Wal2JSON](https://github.com/eulerto/wal2json)
-``Refer git documentation for Wal2JSON installation.``
+``Refer git this documentation of Wal2JSON installation.``
 
 ## Configuration for postgres
 To configure Postgres replication follow below link,
